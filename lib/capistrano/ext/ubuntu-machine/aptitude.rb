@@ -32,7 +32,7 @@ namespace :aptitude do
   DESC
   task :safe_upgrade, :roles => :app do
     # sudo "aptitude safe-upgrade -y", :pty => true
-    
+
     # By default, OVH replace the original /etc/issue. The safe_upgrade will then ask \
     # if it must overwrite this file, since it has been modified by OVH. \
     # data =~ /^\*\*\*\sissue/ looks for the interactive prompt to enable you to answer
@@ -47,7 +47,7 @@ namespace :aptitude do
        end
      end
   end
-  
+
   desc <<-DESC
     Upgrades your installed software packages.
 
@@ -83,7 +83,7 @@ namespace :aptitude do
     package = Capistrano::CLI.ui.ask("Which package should we uninstall: ")
     sudo "aptitude remove #{package}"
   end
-  
+
   desc <<-DESC
     Updates software packages and creates "a solid base for the 'meat' of the \
     server". This task should be run only once when you are first setting up your \
@@ -94,8 +94,13 @@ namespace :aptitude do
   DESC
   task :setup, :roles => :app do
     update
-    sudo "locale-gen en_GB.UTF-8"
-    sudo "/usr/sbin/update-locale LANG=en_GB.UTF-8"
+    if lang = `locale`.match(/LANG=(.*)/)
+      locale = lang[1]
+    else
+      locale = "en_GB.UTF-8"
+    end
+    sudo "locale-gen #{locale}"
+    sudo "/usr/sbin/update-locale LANG=#{locale}"
     safe_upgrade
     full_upgrade
     sudo "aptitude install -y build-essential"
