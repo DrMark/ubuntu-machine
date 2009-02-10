@@ -45,7 +45,7 @@ namespace :mysql do
     create_db_tmp_file = "create_#{db_name}.sql"
     put render("new_db", binding), create_db_tmp_file
     run "mysql -u root -p#{db_root_password} < #{create_db_tmp_file}"
-        
+
     run "mysql -u root -p#{db_root_password} #{db_name} < #{file}"
     run "rm #{file} #{create_db_tmp_file}"
   end
@@ -55,15 +55,16 @@ namespace :mysql do
     db_root_password = Capistrano::CLI.ui.ask("Choose a MySQL root password : ")
     sudo "aptitude install -y mysql-server mysql-client libmysqlclient15-dev"
     sudo "aptitude install -y libmysql-ruby1.8"
+    restart
     run "mysqladmin -u root password #{db_root_password}"
   end
-  
+
   desc "Ask for a MySQL user and change his password"
   task :change_password, :roles => :db do
     user_to_update = Capistrano::CLI.ui.ask("Name of the MySQL user whose you want to update the password : ")
     old_password = Capistrano::CLI.ui.ask("Old password for #{user_to_update} : ")
     new_password = Capistrano::CLI.ui.ask("New password for #{user_to_update} : ")
-    
+
     run "mysqladmin -u #{user_to_update} -p#{old_password} password \"#{new_password}\""
   end
 end
