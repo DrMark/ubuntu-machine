@@ -3,7 +3,10 @@ namespace :machine do
   desc "Change the root password, create a new user and allow him to sudo and to SSH"
   task :initial_setup do
     set :user_to_create , user
-    set :user, username = Capistrano::CLI.ui.ask("Login as? (#{root_user}) : ")
+    username = Capistrano::CLI.ui.ask("Username to login as (#{root_user}) : ")
+    set :user, (username.nil? || username.empty?) ? root_user : username
+    puts "-- logging in as #{user}"
+    run "whoami"
     sure = Capistrano::CLI.ui.ask("Change the password for #{user}? (y/N) : ")
     if sure.to_s.strip.downcase == 'y'
       run "passwd", :pty => true do |ch, stream, data|
