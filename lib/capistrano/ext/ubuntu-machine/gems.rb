@@ -1,6 +1,7 @@
 namespace :gems do
   desc "Install RubyGems"
   task :install_rubygems, :roles => :app do
+    run "cd /tmp"
     run "curl -LO http://rubyforge.org/frs/download.php/45905/rubygems-#{rubygem_version}.tgz"
     run "tar xvzf rubygems-#{rubygem_version}.tgz"
     run "cd rubygems-#{rubygem_version} && sudo ruby setup.rb"
@@ -9,7 +10,7 @@ namespace :gems do
     sudo "gem update --system"
     run "rm -Rf rubygems-#{rubygem_version}*"
   end
-  
+
   desc "List gems on remote server"
   task :list, :roles => :app do
     stream "gem list"
@@ -19,7 +20,7 @@ namespace :gems do
   task :update, :roles => :app do
     sudo "gem update"
   end
-  
+
   desc "Update gem system on remote server"
   task :update_system, :roles => :app do
     sudo "gem update --system"
