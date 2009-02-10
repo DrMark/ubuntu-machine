@@ -9,30 +9,14 @@ namespace :machine do
     run "whoami"
     sure = Capistrano::CLI.ui.ask("Change the password for #{user}? (y/N) : ")
     if sure.to_s.strip.downcase == 'y'
-      run "passwd", :pty => true do |ch, stream, data|
-        if data =~ /UNIX password/
-          # prompt, and then send the response to the remote process
-          ch.send_data(Capistrano::CLI.password_prompt(data) + "\n")
-        else
-          # use the default handler for all other text
-          Capistrano::Configuration.default_io_proc.call(ch, stream, data)
-        end
-      end
+      run_and_watch_prompt("passwd", [/UNIX password/])
     end
 
     users = capture('cat /etc/passwd | cut -d":" -f1').split(/\s+/)
     if users.include?(user_to_create)
       puts "-- user: #{user_to_create.inspect} already exists."
     else
-      sudo "adduser #{user_to_create}", :pty => true do |ch, stream, data|
-        if data =~ /UNIX password/ || data=~/\[\]\:/ || data=~/\[y\/N\]/i
-          # prompt, and then send the response to the remote process
-          ch.send_data(Capistrano::CLI.password_prompt(data) + "\n")
-        else
-          # use the default handler for all other text
-          Capistrano::Configuration.default_io_proc.call(ch, stream, data)
-        end
-      end
+      run_and_watch_prompt("adduser #{user_to_create}", [/UNIX password/, /\[\]\:/, /\[y\/N\]/i])
     end
 
     sudoers_file = capture("cat /etc/sudoers", :via => :sudo)
