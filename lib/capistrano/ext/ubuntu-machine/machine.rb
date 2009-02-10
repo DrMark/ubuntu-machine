@@ -16,7 +16,7 @@ namespace :machine do
     if users.include?(user_to_create)
       puts "-- user: #{user_to_create.inspect} already exists."
     else
-      run_and_watch_prompt("adduser #{user_to_create}", [/UNIX password/, /\[\]\:/, /\[y\/N\]/i])
+      sudo_and_watch_prompt("adduser #{user_to_create}", [/UNIX password/, /\[\]\:/, /\[y\/N\]/i])
     end
 
     sudoers_file = capture("cat /etc/sudoers", :via => :sudo)
