@@ -39,15 +39,15 @@ namespace :machine do
   end
 
   task :install_dev_tools do
-    curl.install
-    mysql.install
-    apache.install
-    ruby.install
-    gems.install_rubygems
-    ruby.install_enterprise
-    ruby.install_passenger
-    git.install
-    php.install
+    curl.install if install_curl
+    mysql.install if install_mysql
+    apache.install if install_apache
+    ruby.install if install_ruby
+    gems.install_rubygems if install_rubygems
+    ruby.install_enterprise if install_ruby_enterprise
+    ruby.install_passenger if install_passenger
+    git.install if install_git
+    php.install if install_php
   end
 
   desc = "Ask for a user and change his password"
