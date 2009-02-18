@@ -36,6 +36,8 @@ set :install_ruby_enterprise, true
 set :install_passenger, true
 set :install_git, true
 set :install_php, false
+set :install_sphinx, true
+#set :install_god, true
 
 # version numbers
 # NOTE: The latest version of Ruby Enterprise Edition is used unless you specify a version below.
@@ -43,6 +45,7 @@ set :install_php, false
 set :rubygem_version, "1.3.1"
 set :passenger_version, "2.0.6"
 set :git_version, "git-1.6.0.6"
+set :sphinx_version, "sphinx-0.9.9-rc1"
 
 # some Apache default values
 set :default_server_admin, "YOUR_EMAIL_ADDRESS_HERE"

@@ -48,6 +48,7 @@ namespace :machine do
     ruby.install_passenger if install_passenger
     git.install if install_git
     php.install if install_php
+    sphinx.install if install_sphinx
   end
 
   desc = "Ask for a user and change his password"
