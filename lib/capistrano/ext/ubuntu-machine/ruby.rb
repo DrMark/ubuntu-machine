@@ -3,7 +3,12 @@ require 'net/http'
 namespace :ruby do
   desc "Install Ruby 1.8"
   task :install, :roles => :app do
-    sudo "aptitude install -y ruby1.8-dev ruby1.8 ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-ruby sqlite3 libsqlite3-ruby1.8"
+    # Typically recommended for a Ruby install -- leaving until I am certain no additional items are needed
+    #apt-get install ruby irb ri rdoc ruby1.8-dev libzlib-ruby libyaml-ruby libreadline-ruby libncurses-ruby libcurses-ruby libruby libruby-extras libfcgi-ruby1.8 build-essential libopenssl-ruby libdbm-ruby libdbi-ruby libdbd-sqlite3-ruby sqlite3 libsqlite3-dev libsqlite3-ruby libxml-ruby libxml2-dev
+
+    sudo "aptitude install -y ruby1.8-dev ruby1.8 ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-ruby sqlite3 libsqlite3-ruby1.8 libxml-ruby libxml2-dev"
+    # These are necessary to install the mechanize gem
+    sudo "aptitude install -y libxslt-ruby libxslt-ruby1.8 libxslt1.1 libxslt1-dev libxslt1-dbg"
     sudo "aptitude install -y libmysql-ruby1.8"
 
     sudo "ln -s /usr/bin/ruby1.8 /usr/bin/ruby"

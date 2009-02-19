@@ -37,6 +37,7 @@ set :install_passenger, true
 set :install_git, true
 set :install_php, false
 set :install_sphinx, true
+set :configure_apparmor, true # necessary to allow MySQL to bulk import from /u/apps/
 #set :install_god, true
 
 # version numbers

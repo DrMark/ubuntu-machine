@@ -49,6 +49,7 @@ namespace :machine do
     git.install if install_git
     php.install if install_php
     sphinx.install if install_sphinx
+    apparmor.configure if configure_apparmor
   end
 
   desc = "Ask for a user and change his password"
