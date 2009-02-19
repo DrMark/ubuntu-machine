@@ -44,6 +44,7 @@ namespace :machine do
     apache.install if install_apache
     ruby.install if install_ruby
     gems.install_rubygems if install_rubygems
+    imagemagick.install if install_imagemagick
     ruby.install_enterprise if install_ruby_enterprise
     ruby.install_passenger if install_passenger
     git.install if install_git
