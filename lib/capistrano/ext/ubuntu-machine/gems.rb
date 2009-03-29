@@ -5,9 +5,9 @@ namespace :gems do
   
   desc "Install RubyGems"
   task :install_rubygems, :roles => :app do
-    run "cd /tmp && curl -LO http://rubyforge.org/frs/download.php/45905/rubygems-#{rubygem_version}.tgz"
-    run "cd /tmp && tar xvzf rubygems-#{rubygem_version}.tgz"
-    run "cd /tmp/rubygems-#{rubygem_version} && sudo ruby setup.rb"
+    run "wget http://rubyforge.org/frs/download.php/45905/rubygems-#{rubygem_version}.tgz"
+    run "tar xvzf rubygems-#{rubygem_version}.tgz"
+    run "cd rubygems-#{rubygem_version} && sudo ruby setup.rb"
     sudo "ln -s /usr/bin/gem1.8 /usr/bin/gem"
     sudo "gem update"
     sudo "gem update --system"

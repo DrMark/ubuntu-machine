@@ -6,10 +6,10 @@ namespace :ruby do
     # Typically recommended for a Ruby install -- leaving until I am certain no additional items are needed
     #apt-get install ruby irb ri rdoc ruby1.8-dev libzlib-ruby libyaml-ruby libreadline-ruby libncurses-ruby libcurses-ruby libruby libruby-extras libfcgi-ruby1.8 build-essential libopenssl-ruby libdbm-ruby libdbi-ruby libdbd-sqlite3-ruby sqlite3 libsqlite3-dev libsqlite3-ruby libxml-ruby libxml2-dev
 
-    sudo "aptitude install -y ruby1.8-dev ruby1.8 ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-ruby sqlite3 libsqlite3-ruby1.8 libxml-ruby libxml2-dev"
+    sudo "apt-get install -y ruby1.8-dev ruby1.8 ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-ruby sqlite3 libsqlite3-ruby1.8 libxml-ruby libxml2-dev"
     # These are necessary to install the mechanize gem
-    sudo "aptitude install -y libxslt-ruby libxslt-ruby1.8 libxslt1.1 libxslt1-dev libxslt1-dbg"
-    sudo "aptitude install -y libmysql-ruby1.8"
+    sudo "apt-get install -y libxslt-ruby libxslt-ruby1.8 libxslt1.1 libxslt1-dev libxslt1-dbg"
+    sudo "apt-get install -y libmysql-ruby1.8"
 
     sudo "ln -s /usr/bin/ruby1.8 /usr/bin/ruby"
     sudo "ln -s /usr/bin/ri1.8 /usr/bin/ri"
@@ -25,6 +25,11 @@ namespace :ruby do
   set :ruby_enterprise_version do
     "#{ruby_enterprise_url[/(ruby-enterprise.*)(.tar.gz)/, 1]}"
   end
+  
+  set :passenger_version do
+    `gem list passenger$ -r`.gsub(/[\n|\s|passenger|(|)]/,"")
+  end
+  
 
   desc "Install Ruby Enterpise Edition"
   task :install_enterprise, :roles => :app do
@@ -32,8 +37,7 @@ namespace :ruby do
     sudo "apt-get install libreadline5-dev -y"
 
     run "test ! -d /opt/#{ruby_enterprise_version}"
-    # run "curl -LO http://rubyforge.org/frs/download.php/50087/#{ruby_enterprise_version}.tar.gz"
-    run "curl -LO #{ruby_enterprise_url}"
+    run "wget #{ruby_enterprise_url}"
     run "tar xzvf #{ruby_enterprise_version}.tar.gz"
     run "rm #{ruby_enterprise_version}.tar.gz"
     sudo "./#{ruby_enterprise_version}/installer --auto /opt/#{ruby_enterprise_version}"
@@ -54,21 +58,26 @@ namespace :ruby do
     sudo "gem install rake"
 
     sudo "apt-get install apache2-mpm-prefork -y"
-    sudo "aptitude install libapr1-dev -y"
+    sudo "apt-get install libapr1-dev -y"
     sudo "apt-get install apache2-prefork-dev -y"
 
+    # call the upgrade_passenger task
+    upgrade_passenger
+  end 
+  
+  desc "Upgrade Phusion Passenger"
+  task :upgrade_passenger, :roles => :app do
     sudo "/opt/#{ruby_enterprise_version}/bin/ruby /opt/#{ruby_enterprise_version}/bin/gem install passenger"
-
-    run "echo -en '\n\n\n\n\n' | sudo /opt/#{ruby_enterprise_version}/bin/ruby /opt/#{ruby_enterprise_version}/bin/passenger-install-apache2-module"
+    run "sudo /opt/#{ruby_enterprise_version}/bin/ruby /opt/#{ruby_enterprise_version}/bin/passenger-install-apache2-module --auto"
 
     put render("passenger.load", binding), "/home/#{user}/passenger.load"
     put render("passenger.conf", binding), "/home/#{user}/passenger.conf"
-
+   
     sudo "mv /home/#{user}/passenger.load /etc/apache2/mods-available/"
     sudo "mv /home/#{user}/passenger.conf /etc/apache2/mods-available/"
-
+    
     sudo "a2enmod passenger"
     apache.force_reload
   end
-
+       
 end
